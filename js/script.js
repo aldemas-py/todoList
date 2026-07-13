@@ -44,6 +44,7 @@ function newElemnt() {
 
   if(taskName.trim() === '') {
     alert("Please enter a task.");
+    myInput.focus();
     return;
   }
   createTodoElement(taskName, false);
@@ -55,14 +56,14 @@ function newElemnt() {
 // Connect the button and enter key
 addButton.addEventListener('click', newElemnt);
 
-myInput.addEventListeners('keydown', function(event) {
+myInput.addEventListener('keydown', function(event) {
   if(event.key === 'Enter') {
     newElemnt();
   }
 });
 
 todolist.addEventListener('change', function(event) {
-  if(event.target.matches('input[name="todo-item-done"]')) {
+  if(event.target.matches('[name="todo-item-done"]')) {
     const lable = event.target.nextElementSibling;
     lable.classList.toggle('lable-done', event.target.checked);
   }
@@ -71,10 +72,10 @@ todolist.addEventListener('change', function(event) {
 // Load tasks from todoList.txt
 async function loadTodoItems() {
   try {
-    const response = await fetch("./item-list.txt");
+    const response = await fetch("./todos.txt");
   
   if (!response.ok) {
-    throw new Error('unsable to load items-list.text : ${response.status}');
+    throw new Error('unsable to load todos.txt : ${response.status}');
   }
   const text = await response.text();
   const todoItems = JSON.parse(text);
