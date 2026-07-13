@@ -2,7 +2,7 @@
  
 const myInput = document.getElementById('myInput');
 const addButton = document.getElementById("addButton");
-const todolist = document.getElementById("todoList");
+const todolist = document.getElementById("toolList");
 // const myCheckbox = document.querySelectorAll('.myUL [name="todo-item-done"]');
 // const myLabel = document.getElementById('todo-item-label');
 
