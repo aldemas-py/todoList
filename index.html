@@ -11,24 +11,33 @@
       <h2>This is a to do list app</h2>
     </header>
     <div class="main-container">
-      <input type="text" id="myInput" placeholder="Add a new task..." />
-      <button onclick="newElement()" class="addBtn">Add</button>
-      <ul class="myTodo">
-        <li>
+      <div class="input-container">
+        <input
+          type="text"
+          id="myInput"
+          placeholder="Add a new task..."
+          autocomplete="off"
+        />
+        <button class="addBtn" id="addButton">Add</button>
+      </div>
+
+      <ul class="myTodo" id="toolList">
+        <li class="todo-item">
           <input type="checkbox" name="todo-item-done" id="todo-item-done-1" />
           <label for="todo-item-done-1">Hit the gym</label>
         </li>
-        <li>
+
+        <li class="todo-item">
           <input type="checkbox" name="todo-item-done" id="todo-item-done-2" />
           <label for="todo-item-done-2">Pay bills</label>
         </li>
 
         <ul class="myUL">
-          <li class="myUL-items">
+          <li class="myUL todo-items">
             <input
               type="checkbox"
               name="todo-item-done"
-              id="todo-item-done-2"
+              id="todo-item-done-1"
               class="old-class-checkbox"
             />
             <label class="todo-item-done" id="todo-item-label"></label>

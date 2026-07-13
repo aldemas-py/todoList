@@ -11,7 +11,7 @@ header {
     margin-bottom: 20px;
 }
 
-header h1 {
+header h2 {
     font-size: 2.5em;
     color: #007bff;
 }
@@ -19,17 +19,22 @@ header h1 {
 .main-container {
     max-width: 800px;
     margin: 0 auto;
-    padding: 20px;
+    padding: 30px;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 30px;
+}
+
+.input-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .main-container input[type="text"] {
-    width: 70%;
+    /* width: 70%; */
     padding: 10px;
-    margin-bottom: 15px;
+    /* margin-bottom: 15px; */
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 1.1em;
@@ -52,14 +57,34 @@ main-container button:hover {
 .main-container ul {
     list-style-type: none;
     padding: 0;
+    margin: 0;
 }
 
-.myUL #todo-item-label {
-    text-decoration: none;
+.todo-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    /* justify-content: space-between; */
+    margin-bottom: 8px;
+    border-bottom: 1px solid #ccc;
+    background-color: #f3f3f3;
+    border-radius: 4px;
+}
 
+.todo-item input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+todo-item label {
+    flex: 1;
+    cursor: pointer;
 }
 
 .lable-done {
+    color: #777;
     text-decoration: line-through;
 }
 
