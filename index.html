@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>To Do List</title>
+  </head>
+  <body>
+    <header>
+      <h2>This is a to do list app</h2>
+    </header>
+    <div class="main-container">
+      <input type="text" id="myInput" placeholder="Add a new task..." />
+      <button onclick="newElement()" class="addBtn">Add</button>
+      <ul class="myTodo">
+        <li>
+          <input type="checkbox" name="todo-item-done" id="todo-item-done-1" />
+          <label for="todo-item-done-1">Hit the gym</label>
+        </li>
+        <li>
+          <input type="checkbox" name="todo-item-done" id="todo-item-done-2" />
+          <label for="todo-item-done-2">Pay bills</label>
+        </li>
+
+        <ul class="myUL">
+          <li class="myUL-items">
+            <input
+              type="checkbox"
+              name="todo-item-done"
+              id="todo-item-done-2"
+              class="old-class-checkbox"
+            />
+            <label class="todo-item-done" id="todo-item-label"></label>
+          </li>
+        </ul>
+      </ul>
+    </div>
+    <script src="js/script.js"></script>
+  </body>
+</html>
