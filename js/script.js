@@ -2,7 +2,7 @@
  
 const myInput = document.getElementById('myInput');
 const addButton = document.getElementById("addButton");
-const todolist = document.getElementById("toolList");
+const todolist = document.getElementById("todoList");
 // const myCheckbox = document.querySelectorAll('.myUL [name="todo-item-done"]');
 // const myLabel = document.getElementById('todo-item-label');
 
@@ -17,7 +17,7 @@ function createTodoElement(taskName, itemDone=false){
   }
 
   const listItem = document.createElement('li');
-  listItem.classList.add('list-items');
+  listItem.classList.add("todo-item");
 
   const checkboxId = `todo-item-done-${nextTodoId}`;
 
@@ -31,7 +31,7 @@ function createTodoElement(taskName, itemDone=false){
   label.htmlFor = checkboxId;
   label.textContent = cleanedTaskName;
 
-  label.classList.toggle('lable-done', itemDone);
+  label.classList.toggle('label-done', itemDone);
 
   listItem.append(checkbox, label);
   todolist.appendChild(listItem);
@@ -64,8 +64,8 @@ myInput.addEventListener('keydown', function(event) {
 
 todolist.addEventListener('change', function(event) {
   if(event.target.matches('[name="todo-item-done"]')) {
-    const lable = event.target.nextElementSibling;
-    lable.classList.toggle('lable-done', event.target.checked);
+    const label = event.target.nextElementSibling;
+    label.classList.toggle('label-done', event.target.checked);
   }
 });
 
