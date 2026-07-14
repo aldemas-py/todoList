@@ -3,11 +3,12 @@
 const myInput = document.getElementById('myInput');
 const addButton = document.getElementById("addButton");
 const todolist = document.getElementById("todoList");
+const MyCheckbox = document.getElementById("MyCheckbox");
 // const myCheckbox = document.querySelectorAll('.myUL [name="todo-item-done"]');
 // const myLabel = document.getElementById('todo-item-label');
 
-//Two tasks already exist in the HTML so the next ID is 3.
- let nextTodoId = 3;
+//Two tasks already exist in the HTML so the next ID is 0.
+ let nextTodoId = 0;
 
 // Write the Function That Creates One Task
 function createTodoElement(taskName, itemDone=false){
@@ -41,16 +42,26 @@ function createTodoElement(taskName, itemDone=false){
 // Add a Task from the Input Field
 function newElemnt() {
   const taskName = myInput.value;
+  const taskCheckbox = MyCheckbox.checked;
 
   if(taskName.trim() === '') {
     alert("Please enter a task.");
     myInput.focus();
     return;
   }
-  createTodoElement(taskName, false);
+  if(taskCheckbox.checked) {
+    taskCheckbox.checked = true;
+    return;
+  }
+  else{
+    taskCheckbox.checked = false;
+  }
+  
+  createTodoElement(taskName, taskCheckbox);
 
   myInput.value = '';
   myInput.focus();
+  MyCheckbox.checked = false;
 }
 
 // Connect the button and enter key

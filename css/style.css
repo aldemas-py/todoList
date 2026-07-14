@@ -31,6 +31,8 @@ header h2 {
     margin-bottom: 20px;
 }
 
+
+.input-container input[type='checkbox'],
 .main-container input[type="text"] {
     /* width: 70%; */
     padding: 10px;
@@ -72,6 +74,8 @@ header h2 {
     border-radius: 4px;
 }
 
+
+.input-container input[type='checkbox'],
 .todo-item input[type="checkbox"] {
     width: 20px;
     height: 20px;
