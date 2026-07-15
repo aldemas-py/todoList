@@ -7,8 +7,17 @@ const MyCheckbox = document.getElementById("MyCheckbox");
 // const myCheckbox = document.querySelectorAll('.myUL [name="todo-item-done"]');
 // const myLabel = document.getElementById('todo-item-label');
 
-//Two tasks already exist in the HTML so the next ID is 0.
-let nextTodoId = 0;
+// Next ID: compute from existing DOM to avoid collisions with pre-seeded markup
+let nextTodoId = (() => {
+  const existingIds = Array.from(
+    todolist.querySelectorAll('input[type="checkbox"][name="todo-item-done"]'),
+  ).map((cb) => {
+    const m = String(cb.id).match(/todo-item-done-(\d+)/);
+    return m ? Number(m[1]) : -1;
+  });
+  const maxId = existingIds.length ? Math.max(...existingIds) : -1;
+  return maxId + 1;
+})();
 
 // Write the Function That Creates One Task
 function createTodoElement(taskName, itemDone = false) {
@@ -42,26 +51,17 @@ function createTodoElement(taskName, itemDone = false) {
 // Add a Task from the Input Field
 function newElemnt() {
   const taskName = myInput.value;
-  const taskCheckbox = MyCheckbox.checked;
+  const itemDone = MyCheckbox.checked;
 
-  if (taskName.trim() === "") {
+  const cleanedTaskName = taskName.trim();
+  if (cleanedTaskName === "") {
     alert("Please enter a task.");
     myInput.focus();
-
-    if (taskCheckbox.checked) {
-      taskCheckbox.checked = true;
-      return;
-    } else {
-      taskCheckbox.checked = false;
-    }
-
     return;
-    createtodoListFile();
   }
 
-  createTodoElement(taskName, taskCheckbox);
-  removeTodoListFile();
-  createTodoListFile();
+  createTodoElement(cleanedTaskName, itemDone);
+  persistTodoList();
 
   myInput.value = "";
   MyCheckbox.checked = false;
@@ -82,38 +82,32 @@ function readTodoList() {
   }
   return todoItems;
 }
-// Remove txt file
-function removeTodoListFile() {
-  fetch("./todosCopy.txt", { method: "DELETE" })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to delete todos.txt");
-      } else {
-        console.log("todos.txt deleted successfully");
-      }
-    })
-    .catch((error) => {
-      console.error("Error deleting todos.txt:", error);
-    });
-  console.log("todos.txt deleted successfully");
+const STORAGE_KEY = "todoList.items.v1";
+
+function persistTodoList() {
+  const todoItems = readTodoList();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(todoItems));
 }
-// Create txt file
-function createTodoListFile() {
-  fetch("./todosCopy.txt", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-  })
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error("Failed to create todos.txt");
-      } else {
-        console.log("todos.txt created successfully");
-      }
-    })
-    .catch((error) => {
-      console.error("Error creating todos.txt:", error);
+
+function loadTodoListFromStorage() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (!raw) return;
+
+  try {
+    const todoItems = JSON.parse(raw);
+    if (!Array.isArray(todoItems)) return;
+
+    // Clear current items before re-hydrating from storage.
+    todolist.innerHTML = "";
+
+    nextTodoId = 0;
+    todoItems.forEach((todo) => {
+      if (!todo) return;
+      createTodoElement(todo.Name ?? "", Boolean(todo.itemDone));
     });
-  console.log("todos.txt created successfully");
+  } catch (e) {
+    console.error("Failed to parse stored todo list", e);
+  }
 }
 
 // Connect the button and enter key
@@ -132,26 +126,8 @@ todolist.addEventListener("change", function (event) {
   }
 });
 
-// Load tasks from todoList.txt
-async function loadTodoItems() {
-  try {
-    const response = await fetch("./todos.txt");
-
-    if (!response.ok) {
-      throw new Error("unsable to load todos.txt : ${response.status}");
-    }
-    const text = await response.text();
-    const todoItems = JSON.parse(text);
-
-    todoItems.forEach(function (todo) {
-      createTodoElement(todo.Name, todo.itemDone);
-    });
-  } catch (error) {
-    console.error("Error loading todo items:", error);
-  }
-}
-
-loadTodoItems();
+// Load tasks from localStorage
+loadTodoListFromStorage();
 
 // myCheckbox.forEach(cb => {
 //   cb.checked = true;
