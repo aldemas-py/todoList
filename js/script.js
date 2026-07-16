@@ -82,19 +82,39 @@ function readTodoList() {
   }
   return todoItems;
 }
-const STORAGE_KEY = "todoList.items.v1";
+const TODOS_FILE = "todos.txt";
+// Backend endpoint to persist files
+const SAVE_ENDPOINT = "save.php";
 
-function persistTodoList() {
+// Persist todo list to todos.txt (browser-only: done by writing todosCopy.txt first)
+async function persistTodoList() {
   const todoItems = readTodoList();
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(todoItems));
+
+  // Store as JSON to keep the existing loader format.
+  const payload = JSON.stringify(todoItems);
+
+  // Attempt to write via server-support (fetch to a .txt only works with backend routes).
+  // Using todosCopy.txt to match the existing project files.
+  try {
+    await fetch(SAVE_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: payload,
+    });
+  } catch (e) {
+    console.error("Failed to persist todos to file:", e);
+  }
 }
 
-function loadTodoListFromStorage() {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) return;
-
+async function loadTodoListFromFile() {
   try {
-    const todoItems = JSON.parse(raw);
+    const response = await fetch(TODOS_FILE);
+    if (!response.ok) {
+      throw new Error(`Failed to load ${TODOS_FILE}: ${response.status}`);
+    }
+
+    const text = await response.text();
+    const todoItems = JSON.parse(text);
     if (!Array.isArray(todoItems)) return;
 
     // Clear current items before re-hydrating from storage.
@@ -106,7 +126,7 @@ function loadTodoListFromStorage() {
       createTodoElement(todo.Name ?? "", Boolean(todo.itemDone));
     });
   } catch (e) {
-    console.error("Failed to parse stored todo list", e);
+    console.error("Error loading todo items:", e);
   }
 }
 
@@ -123,11 +143,12 @@ todolist.addEventListener("change", function (event) {
   if (event.target.matches('[name="todo-item-done"]')) {
     const label = event.target.nextElementSibling;
     label.classList.toggle("label-done", event.target.checked);
+    persistTodoList();
   }
 });
 
-// Load tasks from localStorage
-loadTodoListFromStorage();
+// Load tasks from todos.txt
+loadTodoListFromFile();
 
 // myCheckbox.forEach(cb => {
 //   cb.checked = true;
