@@ -1,15 +1,1 @@
-[
-  {
-    "Name": "Read a chapter of a book",
-    "itemDone": true
-  },
-  {
-    "Name": "Complete JavaScript practice",
-    "itemDone": false
-  },
-  {
-    "Name": "Go to the gym",
-    "itemDone": true
-  }
-]
-
+[]
