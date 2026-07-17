@@ -1,13 +1,29 @@
 <?php
 // save.php
-// Accept JSON payload via POST and persist to todos.txt / todosCopy.txt.
-// Expects request body: JSON string representing an array of { Name, itemDone }
+//
+// Accepts a JSON payload via POST and persists it to todos.txt.
+//
+// Expected request body:
+// - A JSON string representing an array of task objects:
+//     [{ "Name": string, "itemDone": boolean }, ...]
 //
 // Usage from JS:
-// fetch('save.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) })
+// fetch('save.php', {
+//   method: 'POST',
+//   headers: { 'Content-Type': 'application/json' },
+//   body: JSON.stringify(payload)
+// })
 
 header('Content-Type: application/json');
 
+// This endpoint only supports POST.
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    echo json_encode(['ok' => false, 'error' => 'Only POST requests are allowed']);
+    exit;
+}
+
+// Read raw request body.
 $input = file_get_contents('php://input');
 if ($input === false || trim($input) === '') {
     http_response_code(400);
@@ -15,7 +31,7 @@ if ($input === false || trim($input) === '') {
     exit;
 }
 
-// Validate JSON
+// Decode/validate JSON.
 $data = json_decode($input, true);
 if (json_last_error() !== JSON_ERROR_NONE) {
     http_response_code(400);
@@ -23,32 +39,27 @@ if (json_last_error() !== JSON_ERROR_NONE) {
     exit;
 }
 
-// Normalize to the expected structure (array of tasks)
+// Ensure the payload is an array of tasks.
 if (!is_array($data)) {
     http_response_code(400);
     echo json_encode(['ok' => false, 'error' => 'Payload must be a JSON array']);
     exit;
 }
 
-// Paths relative to this PHP file
+// Persist to todos.txt next to this PHP file.
 $baseDir = __DIR__;
 $pathTodos = $baseDir . DIRECTORY_SEPARATOR . 'todos.txt';
-$pathTodosCopy = $baseDir . DIRECTORY_SEPARATOR . 'todosCopy.txt';
 
+// Pretty-print output for easier debugging/inspection.
 $jsonOut = json_encode($data, JSON_PRETTY_PRINT);
 
-// Write todosCopy first (mirrors original intent)
-if (file_put_contents($pathTodosCopy, $jsonOut) === false) {
-    http_response_code(500);
-    echo json_encode(['ok' => false, 'error' => 'Failed writing todosCopy.txt']);
-    exit;
-}
-
-if (file_put_contents($pathTodos, $jsonOut) === false) {
+// Write to disk using an exclusive lock.
+if (file_put_contents($pathTodos, $jsonOut, LOCK_EX) === false) {
     http_response_code(500);
     echo json_encode(['ok' => false, 'error' => 'Failed writing todos.txt']);
     exit;
 }
 
+// Success response.
 http_response_code(200);
 echo json_encode(['ok' => true]);
